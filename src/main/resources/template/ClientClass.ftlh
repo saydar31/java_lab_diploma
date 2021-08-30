@@ -16,7 +16,7 @@ private final OkHttpClient okHttpClient = new OkHttpClient();
 private final ObjectMapper objectMapper = new ObjectMapper();
 private String token;
 
-private static final String AUTHENTICATION_SUFFIX = "${autheticationUrl}";
+private static final String AUTHENTICATION_SUFFIX = "${authenticationUrl}";
 
 public void authenticate(String login, String password) {
 ${authenticationCredentialsClassName} authenticationCredentials = new ${authenticationCredentialsClassName}(login, password);

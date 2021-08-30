@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class RenderService {
+public class CodeGeneratorService {
     private final Configuration configuration;
 
     @Autowired
-    public RenderService(@Qualifier("javaClassFreeMarkerConfigurationFactoryBean") Configuration configuration) {
+    public CodeGeneratorService(@Qualifier("javaClassFreeMarkerConfigurationFactoryBean") Configuration configuration) {
         this.configuration = configuration;
     }
 
