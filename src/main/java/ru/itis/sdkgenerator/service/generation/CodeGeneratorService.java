@@ -1,4 +1,4 @@
-package ru.itis.sdkgenerator.service;
+package ru.itis.sdkgenerator.service.generation;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

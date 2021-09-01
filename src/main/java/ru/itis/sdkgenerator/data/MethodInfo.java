@@ -3,6 +3,7 @@ package ru.itis.sdkgenerator.data;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,12 @@ public class MethodInfo {
     private List<MethodParameter> queryParams;
     private MethodParameter bodyParameter;
     private boolean authenticationMethod;
+
+    public MethodInfo() {
+        this.parameters = new ArrayList<>();
+        this.pathVars = new ArrayList<>();
+        this.queryParams = new ArrayList<>();
+    }
 
     public boolean isWithBody() {
         return Arrays.asList(RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH)

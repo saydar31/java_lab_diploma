@@ -17,9 +17,8 @@ public class ControllerScanner {
     @Autowired
     private MethodScanner methodScanner;
 
-    public ServiceInfo scan(Object controller) {
+    public ServiceInfo scan(Class<?> controllerClass) {
         ServiceInfo serviceInfo = new ServiceInfo();
-        Class<?> controllerClass = controller.getClass();
         String beanUrlPrefix = "";
         if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);

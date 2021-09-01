@@ -2,36 +2,41 @@ package ru.itis.sdkgenerator.service;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import ru.itis.sdkgenerator.annotations.SdkController;
-import ru.itis.sdkgenerator.annotations.SdkMethod;
 import ru.itis.sdkgenerator.data.ClientInfo;
 import ru.itis.sdkgenerator.data.MethodInfo;
 import ru.itis.sdkgenerator.data.ServiceInfo;
 
-import javax.annotation.PostConstruct;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Service
+@Component
 public class ApplicationScanner {
 
-    @Value("${sdk.enabled}")
-    private boolean sdkIsOn;
-
-    @Autowired
-    private ListableBeanFactory listableBeanFactory;
     @Autowired
     private ControllerScanner controllerScanner;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private RequestMappingHandlerMapping handlerMapping;
 
+    @EventListener(ContextRefreshedEvent.class)
     public ClientInfo getClientInfo() {
-        Map<String, Object> sdkControllers = listableBeanFactory.getBeansWithAnnotation(SdkController.class);
         /*
          * получаем список методов помеченных аннотацией
          * из метода нужно получить
@@ -40,10 +45,15 @@ public class ApplicationScanner {
          * класс внутри response entry
          * из аннотации получить имя метода
          */
+        List<? extends Class<?>> controllerClasses = handlerMapping.getHandlerMethods().values().stream()
+                .map(HandlerMethod::getBeanType)
+                .filter(aClass -> aClass.isAnnotationPresent(SdkController.class))
+                .distinct()
+                .collect(Collectors.toList());
+
         List<ServiceInfo> services = new ArrayList<>();
-        for (Map.Entry<String, Object> stringObjectEntry : sdkControllers.entrySet()) {
-            Object controller = stringObjectEntry.getValue();
-            ServiceInfo serviceInfo = controllerScanner.scan(controller);
+        for (Class<?> controllerClass : controllerClasses) {
+            ServiceInfo serviceInfo = controllerScanner.scan(controllerClass);
             services.add(serviceInfo);
         }
         ClientInfo clientInfo = new ClientInfo();
@@ -57,4 +67,5 @@ public class ApplicationScanner {
         methodInfoOptional.ifPresent(clientInfo::setAuthenticationMethod);
         return clientInfo;
     }
+
 }

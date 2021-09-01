@@ -118,8 +118,7 @@ public class MethodScanner {
 
     RequestMethod getMethodFromSpecifiedAnnotation(Method method, Class<? extends Annotation> annotationClass) {
         if (method.isAnnotationPresent(annotationClass)) {
-            Annotation annotation = method.getAnnotation(annotationClass);
-            return annotation.getClass().getAnnotation(RequestMapping.class).method()[0];
+            return annotationClass.getAnnotation(RequestMapping.class).method()[0];
         } else {
             return null;
         }
