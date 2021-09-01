@@ -18,24 +18,38 @@ private String token;
 
 private static final String AUTHENTICATION_SUFFIX = "${authenticationUrl}";
 
-public void authenticate(String login, String password) {
-${authenticationCredentialsClassName} authenticationCredentials = new ${authenticationCredentialsClassName}(login, password);
+public ${authenticationMethod.type} ${authenticationMethod.name}(<#list authenticationMethod.params as param>${type} ${name}<#sep>, </#sep></#list>) {
 try {
-String body = objectMapper.writeValueAsString(authenticationCredentials);
+String urlString = client.getBaseUrl() + "${authenticationMethod.path}";
+
+<#list authenticationMethod.pathVars>
+    urlString = urlString
+    <#items as pathVar>
+        .replace("${pathVar.requestName}", String.valueOf(${pathVar.javaParameterName}))
+    </#items>;
+</#list>
+
+HttpUrl.Builder urlBuilder = HttpUrl.parse(urlString).newBuilder();
+<#list authenticationMethod.queryParams as queryParam>
+    urlBuilder.addQueryParameter("${queryParam.requestName}",${queryParam.javaParameterName});
+</#list>
+<#if authenticationMethod.withBody>
+    String jsonBody = objectMapper.writeValueAsString(${authenticationMethod.bodyParam});
+</#if>
 Request request = new Request.Builder()
-.url(BASE_URL + AUTHENTICATION_SUFFIX)
-.post(RequestBody.create(body, MediaType.parse("application/json")))
+.url(urlBuilder.build().url())
+.#{authenticationMethod.httpauthenticationMethod}(<#if authenticationMethod.withBody>RequestBody.create(jsonBody, MediaType.parse("application/json"))</#if>)
 .build();
 Call call = okHttpClient.newCall(request);
 Response response = call.execute();
-if (response.isSuccessful()){
-${tokenWrapperClassName} tokenWrapper = objectMapper.readValue(response.body().string(), ${tokenWrapperClassName}.class);
-this.token = tokenWrapper.${getTokenMethodName}();
+if (response.isSuccessful()) {
+<#if authenticationMethod.returnTypeNotVoid>
+    String body = response.body().string();
+    return objectMapper.readValue(body, new TypeReference<>() {});
+</#if>
 } else {
-else {
 String body = response.body().string();
 throw objectMapper.readValue(body, ${requestErrorClassName}.class)
-}
 }
 } catch (JsonProcessingException e) {
 throw new IllegalArgumentException(e);

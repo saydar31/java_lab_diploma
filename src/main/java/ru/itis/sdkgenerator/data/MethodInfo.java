@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MethodInfo {
     private HttpMethod httpMethod;
-    private String methodName;
+    private String name;
     private Type responseBodyType;
     private List<MethodParameter> parameters;
     private List<MethodParameter> pathVars;

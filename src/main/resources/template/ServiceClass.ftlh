@@ -17,7 +17,7 @@ public class ${name}Service {
     private final ObjectMapper objectMapper;
 
     <#list methods as method>
-        public ${type} post(<#list method.params as param>${type} ${name}<#sep>, </#sep></#list>) {
+        public ${method.type} ${method.name}(<#list method.params as param>${type} ${name}<#sep>, </#sep></#list>) {
             try {
                 String urlString = client.getBaseUrl() + "${method.path}";
 
