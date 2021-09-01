@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ApplicationScanner {
@@ -49,6 +50,11 @@ public class ApplicationScanner {
         clientInfo.setServiceName("Rest");
         clientInfo.setBasePackage("ru.itis");
         clientInfo.setServices(services);
+
+        Optional<MethodInfo> methodInfoOptional = clientInfo.getServices().stream()
+                .flatMap(serviceInfo -> serviceInfo.getMethods().stream())
+                .filter(MethodInfo::isAuthenticationMethod).findAny();
+        methodInfoOptional.ifPresent(clientInfo::setAuthenticationMethod);
         return clientInfo;
     }
 }

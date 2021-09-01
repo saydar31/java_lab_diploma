@@ -8,4 +8,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SdkController {
+    /**
+     * @return Service name prefix in camel case;
+     */
+    String serviceName();
 }
