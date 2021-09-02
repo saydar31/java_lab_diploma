@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "sdk-generator.basePackage",
+      "type": "java.lang.String",
+      "description": "All classes package."
+    },
+    {
+      "name": "sdk-generator.groupId",
+      "type": "java.lang.String",
+      "description": " pom.xml groupId."
+    },
+    {
+      "name": "sdk-generator.artifactId",
+      "type": "java.lang.String",
+      "description": "Description for sdk-generator.."
+    },
+    {
+      "name": "sdk-generator.version",
+      "type": "java.lang.String",
+      "description": "Description for sdk-generator.."
+    },
+    {
+      "name": "sdk-generator.outputPath",
+      "type": "java.lang.String",
+      "description": "Description for sdk-generator.."
+    }
+  ]
+}

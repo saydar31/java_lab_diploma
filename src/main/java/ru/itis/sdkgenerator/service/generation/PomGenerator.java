@@ -20,7 +20,7 @@ public class PomGenerator {
     private final SdkGeneratorProperties sdkGeneratorProperties;
 
     @Autowired
-    public PomGenerator(@Qualifier("javaClassFreeMarkerConfigurationFactoryBean") Configuration configuration, SdkGeneratorProperties sdkGeneratorProperties) {
+    public PomGenerator(@Qualifier("freemarkerConfiguration") Configuration configuration, SdkGeneratorProperties sdkGeneratorProperties) {
         this.configuration = configuration;
         this.sdkGeneratorProperties = sdkGeneratorProperties;
     }
@@ -28,7 +28,9 @@ public class PomGenerator {
     public void renderPom() {
         try {
             Template template = configuration.getTemplate("/pom.ftlh");
-            File pomXml = new File(sdkGeneratorProperties.getOutputPath() + File.separator + "pom.xml");
+            String sdkOutPath = sdkGeneratorProperties.getOutputPath() != null ?
+                    sdkGeneratorProperties.getOutputPath() : "." + File.separator + "sdk-out";
+            File pomXml = new File(sdkOutPath + File.separator + "pom.xml");
             pomXml.createNewFile();
             Writer writer = new BufferedWriter(new FileWriter(pomXml));
             Map<String, Object> model = new HashMap<>();
@@ -43,7 +45,7 @@ public class PomGenerator {
                             sdkGeneratorProperties.getArtifactId() : "1.0-SNAPSHOT");
             template.process(model, writer);
         } catch (IOException | TemplateException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
     }
 }
