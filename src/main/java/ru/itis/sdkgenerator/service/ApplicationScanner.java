@@ -35,8 +35,7 @@ public class ApplicationScanner {
     @Autowired
     private RequestMappingHandlerMapping handlerMapping;
 
-    @EventListener(ContextRefreshedEvent.class)
-    public ClientInfo getClientInfo() {
+    public ClientInfo scan() {
         /*
          * получаем список методов помеченных аннотацией
          * из метода нужно получить
