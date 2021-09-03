@@ -1,23 +1,30 @@
+<#ftl output_format="plainText">
 package ${package}.rest.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
-import ${package}.rest.client.CacheClient;
-import ${package}.rest.client.model.CacheItem;
+import ${package}.rest.client.*;
+import ${package}.rest.client.model.*;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ${name}Service {
-    private final CacheClient client;
+    private final ${appName}Client client;
 
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
 
+    public ${name}Service(${appName}Client client){
+        this.client = client;
+        this.okHttpClient = client.getOkHttpClient();
+        this.objectMapper = client.getObjectMapper();
+    }
+
     <#list methods as method>
-        public ${method.type} ${method.name}(<#list method.params as param>${type} ${name}<#sep>, </#sep></#list>) {
+        public ${method.responseBodyType} ${method.name}(<#list method.parameters as param>${param.type} ${param.javaParameterName}<#sep>, </#sep></#list>) {
             try {
                 String urlString = client.getBaseUrl() + "${method.path}";
 
@@ -33,11 +40,11 @@ public class ${name}Service {
                     urlBuilder.addQueryParameter("${queryParam.requestName}",${queryParam.javaParameterName});
                 </#list>
                 <#if method.withBody>
-                    String jsonBody = objectMapper.writeValueAsString(${method.bodyParam});
+                    String jsonBody = objectMapper.writeValueAsString(${method.bodyParameter.javaParameterName});
                 </#if>
                 Request request = new Request.Builder()
                     .url(urlBuilder.build().url())
-                    .#{method.httpMethod}(<#if method.withBody>RequestBody.create(jsonBody, MediaType.parse("application/json"))</#if>)
+                    .${method.httpMethodString}(<#if method.withBody>RequestBody.create(jsonBody, MediaType.parse("application/json"))</#if>)
                     .build();
                 Call call = okHttpClient.newCall(request);
                 Response response = call.execute();

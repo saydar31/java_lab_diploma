@@ -10,7 +10,7 @@ public class FreemarkerConfig {
     @Bean
     public freemarker.template.Configuration freemarkerConfiguration() {
         freemarker.template.Configuration conf = new freemarker.template.Configuration(new Version(2, 3, 29));
-        conf.setClassForTemplateLoading(FreemarkerConfig.class, "/templates/");
+        conf.setClassForTemplateLoading(FreemarkerConfig.class, "/sdkTemplates/");
         return conf;
     }
 }

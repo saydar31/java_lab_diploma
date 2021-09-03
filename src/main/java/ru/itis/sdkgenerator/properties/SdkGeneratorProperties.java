@@ -11,6 +11,7 @@ public class SdkGeneratorProperties {
     private String clientName;
     private String outputPath;
     private String version;
+    private Class<?> errorBodyClass;
 
     public String getHost() {
         return host;
@@ -66,5 +67,17 @@ public class SdkGeneratorProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public Class<?> getErrorBodyClass() {
+        return errorBodyClass;
+    }
+
+    public String getErrorBodyClassName() {
+        return errorBodyClass.getName();
+    }
+
+    public void setErrorBodyClass(Class<?> errorBodyClass) {
+        this.errorBodyClass = errorBodyClass;
     }
 }

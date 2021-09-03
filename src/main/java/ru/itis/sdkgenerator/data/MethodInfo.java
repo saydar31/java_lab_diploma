@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MethodInfo {
     private RequestMethod httpMethod;
@@ -29,6 +30,10 @@ public class MethodInfo {
                 .contains(httpMethod);
     }
 
+    public boolean isReturnTypeNotVoid() {
+        return responseBodyType.equals(Void.class) || responseBodyType.equals(void.class);
+    }
+
     public void addParameter(MethodParameter methodParameter) {
         parameters.add(methodParameter);
         if (methodParameter.getMethodParameterType().equals(MethodParameterType.QUERY_PARAMETER)) {
@@ -44,6 +49,10 @@ public class MethodInfo {
 
     public RequestMethod getHttpMethod() {
         return httpMethod;
+    }
+
+    public String getHttpMethodString() {
+        return httpMethod.name().toLowerCase(Locale.ROOT);
     }
 
     public void setHttpMethod(RequestMethod httpMethod) {

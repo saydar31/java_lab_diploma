@@ -19,6 +19,6 @@ public class SdkGenerator {
     @EventListener(ContextRefreshedEvent.class)
     public void generate(){
         ClientInfo clientInfo = applicationScanner.scan();
-        codeGeneratorService.generateCode();
+        codeGeneratorService.generateCode(clientInfo);
     }
 }
