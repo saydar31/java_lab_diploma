@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.itis.sdkgenerator.data.ClientInfo;
 import ru.itis.sdkgenerator.data.MethodParameter;
+import ru.itis.sdkgenerator.properties.SdkGeneratorProperties;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,9 +17,12 @@ import java.util.stream.Collectors;
 public class DataClassesGenerator {
     private final Configuration configuration;
 
+    private final SdkGeneratorProperties sdkGeneratorProperties;
+
     @Autowired
-    public DataClassesGenerator(@Qualifier("freemarkerConfiguration") Configuration configuration) {
+    public DataClassesGenerator(@Qualifier("freemarkerConfiguration") Configuration configuration, SdkGeneratorProperties sdkGeneratorProperties) {
         this.configuration = configuration;
+        this.sdkGeneratorProperties = sdkGeneratorProperties;
     }
 
     public void generateModelClasses(ClientInfo clientInfo) {
@@ -34,11 +37,22 @@ public class DataClassesGenerator {
                 })
                 .flatMap(Collection::stream)
                 .filter(type -> {
-                    if (type instanceof Class){
+                    if (type instanceof Class) {
                         return ((Class<?>) type).getName().startsWith("java");
                     }
                     return true;
                 })
                 .collect(Collectors.toSet());
+
+
     }
+
+    private void prepareDirectories(){
+
+    }
+
+    private void generateClass(Class<?> clazz){
+
+    }
+
 }
