@@ -2,20 +2,20 @@ package ${package}.rest.client.model;
 
 public class ${className} <#if isErrorObject> extends RuntimeException</#if>{
 
-<#list fields as field>
-    private ${fullTypeName} ${name};
+<#list properties as property>
+    private ${property.propertyType} ${property.name};
 </#list>
 
 
 public ${className}() {
 }
 
-<#list fields as field>
-    public ${fullTypeName} ${getterName}(){
-        return ${name};
+<#list properties as property>
+    public ${property.propertyType} ${property.readMethod.name}(){
+    return ${property.name};
     }
-    public void ${setterName}(${fullTypeName} ${name}) {
-        this.${name} = ${name};
+    public void ${property.writeMethod.name}(${property.propertyType}  ${property.name}) {
+    this.${property.name} = ${property.name};
     }
 </#list>
 

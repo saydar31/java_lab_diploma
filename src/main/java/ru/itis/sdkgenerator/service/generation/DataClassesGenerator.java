@@ -1,6 +1,8 @@
 package ru.itis.sdkgenerator.service.generation;
 
 import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -8,9 +10,16 @@ import ru.itis.sdkgenerator.data.ClientInfo;
 import ru.itis.sdkgenerator.data.MethodParameter;
 import ru.itis.sdkgenerator.properties.SdkGeneratorProperties;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,7 +34,7 @@ public class DataClassesGenerator {
         this.sdkGeneratorProperties = sdkGeneratorProperties;
     }
 
-    public void generateModelClasses(ClientInfo clientInfo) {
+    public void generateModelClasses(File dataDirectory, ClientInfo clientInfo) {
         Set<Type> allTypes = clientInfo.getServices().stream()
                 .flatMap(serviceInfo -> serviceInfo.getMethods().stream())
                 .map(methodInfo -> {
@@ -38,21 +47,44 @@ public class DataClassesGenerator {
                 .flatMap(Collection::stream)
                 .filter(type -> {
                     if (type instanceof Class) {
-                        return ((Class<?>) type).getName().startsWith("java");
+                        Class<?> clazz = (Class<?>) type;
+                        //we should generate code only for non-built-in classes
+                        return !(clazz.getName().startsWith("java.") || clazz.equals(void.class) || clazz.isPrimitive() || clazz.isArray());
                     }
                     return true;
                 })
                 .collect(Collectors.toSet());
-
+        Set<? extends Class<?>> classes = allTypes.stream()
+                .filter(type -> type instanceof Class)
+                .map(type -> (Class<?>) type)
+                .collect(Collectors.toSet());
+        for (Class<?> aClass : classes) {
+            generateClass(aClass, dataDirectory);
+        }
 
     }
 
-    private void prepareDirectories(){
-
-    }
-
-    private void generateClass(Class<?> clazz){
-
+    private void generateClass(Class<?> clazz, File directory) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            Map<String, Object> data = new HashMap<>();
+            Set<PropertyDescriptor> properties = Arrays.stream(beanInfo.getPropertyDescriptors())
+                    .filter(property -> !property.getName().equals("class"))
+                    .collect(Collectors.toSet());
+            data.put("properties", properties);
+            String basePackage = sdkGeneratorProperties.getBasePackage() != null ?
+                    sdkGeneratorProperties.getBasePackage() : "com.company.demo";
+            data.put("package", basePackage);
+            data.put("className", clazz.getSimpleName());
+            data.put("isErrorObject", sdkGeneratorProperties.getErrorBodyClass().equals(clazz));
+            Template template = configuration.getTemplate("/objectClass.ftlh");
+            File file = new File(directory, clazz.getSimpleName() + ".java");
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+            template.process(data, bufferedWriter);
+            bufferedWriter.close();
+        } catch (IntrospectionException | IOException | TemplateException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 }

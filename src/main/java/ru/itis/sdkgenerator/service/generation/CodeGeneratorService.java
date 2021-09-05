@@ -23,6 +23,6 @@ public class CodeGeneratorService {
         SdkProjectStructure projectDirectories = directoriesCreator.createProjectDirectories();
         pomGenerator.renderPom(projectDirectories.getRootDirectory());
         serviceClassGenerator.createServiceClasses(projectDirectories.getServicesDirectory(), clientInfo);
-        dataClassesGenerator.generateModelClasses(clientInfo);
+        dataClassesGenerator.generateModelClasses(projectDirectories.getDataDirectory(), clientInfo);
     }
 }
