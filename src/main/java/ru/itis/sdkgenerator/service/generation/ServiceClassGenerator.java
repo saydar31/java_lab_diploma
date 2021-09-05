@@ -29,21 +29,15 @@ public class ServiceClassGenerator {
         this.sdkGeneratorProperties = sdkGeneratorProperties;
     }
 
-    public void createServiceClasses(ClientInfo clientInfo) {
-        String sdkOutPath = sdkGeneratorProperties.getOutputPath() != null ?
-                sdkGeneratorProperties.getOutputPath() : "." + File.separator + "sdk-out";
+    public void createServiceClasses(File servicesDirectory, ClientInfo clientInfo) {
         String basePackage = sdkGeneratorProperties.getBasePackage() != null ?
                 sdkGeneratorProperties.getBasePackage() : "com.company.demo";
-        String sourceCodePath = sdkOutPath + File.separator + "src" + File.separator + "main" + File.separator + "java";
 
-        if (sdkGeneratorProperties.getErrorBodyClass() == null){
+        if (sdkGeneratorProperties.getErrorBodyClass() == null) {
             throw new IllegalStateException();
         }
         String errorBodyType = basePackage + ".model." + sdkGeneratorProperties.getErrorBodyClass().getSimpleName();
 
-        String servicesFolderPath = getServicesFolderPath(sourceCodePath, basePackage + ".rest.client.services");
-        File servicesFolder = new File(servicesFolderPath);
-        servicesFolder.mkdirs();
 
         for (ServiceInfo service : clientInfo.getServices()) {
             try {
@@ -56,26 +50,16 @@ public class ServiceClassGenerator {
 
                 Template template = configuration.getTemplate("/ServiceClass.ftlh");
 
-                File classFile = new File(getClassPath(basePackage, service.getName() + "Service.java", sourceCodePath));
+                File classFile = new File(servicesDirectory, service.getName() + "Service.java");
                 classFile.createNewFile();
-
-                template.process(data, new BufferedWriter(new FileWriter(classFile)));
-
+                BufferedWriter fileWriter = new BufferedWriter(new FileWriter(classFile));
+                template.process(data, fileWriter);
+                fileWriter.close();
             } catch (IOException | TemplateException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-    }
-
-    private String getClassPath(String basePackage, String className, String sourceCodePath) {
-        String fullPackage = basePackage + ".rest.client.services";
-        String packageAsPathPart = fullPackage.replace(".", File.separator);
-        return sourceCodePath + File.separator + packageAsPathPart + File.separator + className;
-    }
-
-    private String getServicesFolderPath(String sourceCodePath, String servicesPackage) {
-        return sourceCodePath + File.separator + servicesPackage.replace(".", File.separator);
     }
 
 }

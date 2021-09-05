@@ -23,10 +23,23 @@ public class DirectoriesCreator {
         File rootDirectory = new File(sdkOutPath);
         rootDirectory.mkdirs();
 
+        File javaCodeDirectory = new File(rootDirectory, "src" + File.separator + "main" + File.separator + "java");
+        javaCodeDirectory.mkdirs();
+
         //base package
-        String basePackage = sdkGeneratorProperties.getBasePackage() != null ?
-                sdkGeneratorProperties.getBasePackage() : "com.company.demo";
-        String basePackagePath = sdkOutPath + File.separator + basePackage.replace(".", File.separator);
-        File file = new File(basePackagePath);
+        String basePackage = (sdkGeneratorProperties.getBasePackage() != null ?
+                sdkGeneratorProperties.getBasePackage() : "com.company.demo") + ".rest.client";
+        File basePackageDirectory = new File(javaCodeDirectory, basePackage.replace(".", File.separator));
+        basePackageDirectory.mkdirs();
+
+        //services package
+        File servicesDirectory = new File(basePackageDirectory, "services");
+        servicesDirectory.mkdirs();
+
+        //model path
+        File modelDirectory = new File(basePackageDirectory, "model");
+        modelDirectory.mkdirs();
+
+        return new SdkProjectStructure(rootDirectory, basePackageDirectory, servicesDirectory, modelDirectory);
     }
 }

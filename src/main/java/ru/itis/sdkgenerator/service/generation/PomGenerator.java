@@ -6,7 +6,6 @@ import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.itis.sdkgenerator.data.ClientInfo;
 import ru.itis.sdkgenerator.properties.SdkGeneratorProperties;
 
 import java.io.*;
@@ -25,12 +24,10 @@ public class PomGenerator {
         this.sdkGeneratorProperties = sdkGeneratorProperties;
     }
 
-    public void renderPom() {
+    public void renderPom(File rootDirectory) {
         try {
             Template template = configuration.getTemplate("/pom.ftlh");
-            String sdkOutPath = sdkGeneratorProperties.getOutputPath() != null ?
-                    sdkGeneratorProperties.getOutputPath() : "." + File.separator + "sdk-out";
-            File pomXml = new File(sdkOutPath + File.separator + "pom.xml");
+            File pomXml = new File(rootDirectory, "pom.xml");
             pomXml.createNewFile();
             Writer writer = new BufferedWriter(new FileWriter(pomXml));
             Map<String, Object> model = new HashMap<>();
@@ -44,6 +41,7 @@ public class PomGenerator {
                     sdkGeneratorProperties.getVersion() != null ?
                             sdkGeneratorProperties.getArtifactId() : "1.0-SNAPSHOT");
             template.process(model, writer);
+            writer.close();
         } catch (IOException | TemplateException e) {
             throw new IllegalStateException(e);
         }
