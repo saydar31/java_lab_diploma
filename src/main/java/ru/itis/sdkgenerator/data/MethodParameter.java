@@ -10,7 +10,7 @@ public class MethodParameter {
     private MethodParameterType methodParameterType;
     private String modelPackage;
 
-    public String getReturnTypeName() {
+    public String getTypeName() {
         if (type instanceof Class) {
             Class<?> aClass = (Class<?>) this.type;
             if (aClass.getPackage().getName().startsWith("java.")) {

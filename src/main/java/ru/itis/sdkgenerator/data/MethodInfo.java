@@ -31,6 +31,9 @@ public class MethodInfo {
     public String getReturnTypeName() {
         if (responseBodyType instanceof Class) {
             Class<?> aClass = (Class<?>) this.responseBodyType;
+            if (aClass.isPrimitive()){
+                return aClass.getName();
+            }
             if (aClass.getPackage().getName().startsWith("java.")) {
                 return aClass.getName();
             } else {
@@ -96,6 +99,9 @@ public class MethodInfo {
     }
 
     public void setResponseBodyType(Type responseBodyType) {
+        if (responseBodyType.equals(Void.class)){
+            responseBodyType = void.class;
+        }
         this.responseBodyType = responseBodyType;
     }
 

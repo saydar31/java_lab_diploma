@@ -18,8 +18,7 @@ private String token;
 
 
 <#if authenticationMethod??>
-    private static final String AUTHENTICATION_SUFFIX = "${authenticationUrl}";
-    public ${authenticationMethod.responseBodyType.typeName} ${authenticationMethod.name}(<#list authenticationMethod.parameters as param>${param.type.typeName} ${param.javaParameterName}<#sep>, </#sep></#list>) {
+    public ${method.returnTypeName} ${authenticationMethod.name}(<#list authenticationMethod.parameters as param>${param.typeName} ${param.javaParameterName}<#sep>, </#sep></#list>) {
     try {
     String urlString = client.getBaseUrl() + "${authenticationMethod.path}";
 

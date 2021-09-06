@@ -24,7 +24,7 @@ public class ${name}Service {
     }
 
     <#list methods as method>
-        public ${method.responseBodyType.typeName} ${method.name}(<#list method.parameters as param>${param.type.typeName} ${param.javaParameterName}<#sep>, </#sep></#list>) {
+        public ${method.returnTypeName} ${method.name}(<#list method.parameters as param>${param.typeName} ${param.javaParameterName}<#sep>, </#sep></#list>) {
             try {
                 String urlString = client.getBaseUrl() + "${method.path}";
 
@@ -42,11 +42,13 @@ public class ${name}Service {
                 <#if method.withBody>
                     String jsonBody = objectMapper.writeValueAsString(${method.bodyParameter.javaParameterName});
                 </#if>
-                Request request = new Request.Builder()
+                Request.Builder requestBuilder = new Request.Builder()
                     .url(urlBuilder.build().url())
-                    .${method.httpMethodString}(<#if method.withBody>RequestBody.create(jsonBody, MediaType.parse("application/json"))</#if>)
-                    .build();
-                Call call = okHttpClient.newCall(request);
+                    .${method.httpMethodString}(<#if method.withBody>RequestBody.create(jsonBody, MediaType.parse("application/json"))</#if>);
+                if (client.getToken() != null){
+                    requestBuilder.header("Authorization", client.getToken());
+                }
+                Call call = okHttpClient.newCall(requestBuilder.build());
                 Response response = call.execute();
                 if (response.isSuccessful()) {
                 <#if method.returnTypeNotVoid>
