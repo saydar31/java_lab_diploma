@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "sdk-generator")
 public class SdkGeneratorProperties {
-    private String host;
+    private String baseUrl;
     private String basePackage;
     private String groupId;
     private String artifactId;
@@ -13,16 +13,20 @@ public class SdkGeneratorProperties {
     private String version;
     private Class<?> errorBodyClass;
 
-    public String getHost() {
-        return host;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public String getBasePackage() {
-        return basePackage;
+        if (basePackage != null){
+            return basePackage;
+        } else {
+            return "com.company.demo";
+        }
     }
 
     public void setBasePackage(String basePackage) {

@@ -1,5 +1,5 @@
 <#ftl output_format="plainText">
-package ${package}.rest.client;
+package ${package}.rest.client.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,7 +24,7 @@ public class ${name}Service {
     }
 
     <#list methods as method>
-        public ${method.responseBodyType} ${method.name}(<#list method.parameters as param>${param.type} ${param.javaParameterName}<#sep>, </#sep></#list>) {
+        public ${method.responseBodyType.typeName} ${method.name}(<#list method.parameters as param>${param.type.typeName} ${param.javaParameterName}<#sep>, </#sep></#list>) {
             try {
                 String urlString = client.getBaseUrl() + "${method.path}";
 
@@ -55,7 +55,7 @@ public class ${name}Service {
                 </#if>
                 } else {
                     String body = response.body().string();
-                    throw objectMapper.readValue(body, ${requestErrorClassName}.class)
+                    throw objectMapper.readValue(body, ${requestErrorClassName}.class);
                 }
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException(e);

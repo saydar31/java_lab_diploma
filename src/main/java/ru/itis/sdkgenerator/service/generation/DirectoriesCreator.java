@@ -27,8 +27,7 @@ public class DirectoriesCreator {
         javaCodeDirectory.mkdirs();
 
         //base package
-        String basePackage = (sdkGeneratorProperties.getBasePackage() != null ?
-                sdkGeneratorProperties.getBasePackage() : "com.company.demo") + ".rest.client";
+        String basePackage = sdkGeneratorProperties.getBasePackage() + ".rest.client";
         File basePackageDirectory = new File(javaCodeDirectory, basePackage.replace(".", File.separator));
         basePackageDirectory.mkdirs();
 

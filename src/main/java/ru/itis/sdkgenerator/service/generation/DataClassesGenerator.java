@@ -54,6 +54,7 @@ public class DataClassesGenerator {
                     return true;
                 })
                 .collect(Collectors.toSet());
+        allTypes.add(sdkGeneratorProperties.getErrorBodyClass());
         Set<? extends Class<?>> classes = allTypes.stream()
                 .filter(type -> type instanceof Class)
                 .map(type -> (Class<?>) type)
@@ -72,8 +73,7 @@ public class DataClassesGenerator {
                     .filter(property -> !property.getName().equals("class"))
                     .collect(Collectors.toSet());
             data.put("properties", properties);
-            String basePackage = sdkGeneratorProperties.getBasePackage() != null ?
-                    sdkGeneratorProperties.getBasePackage() : "com.company.demo";
+            String basePackage = sdkGeneratorProperties.getBasePackage();
             data.put("package", basePackage);
             data.put("className", clazz.getSimpleName());
             data.put("isErrorObject", sdkGeneratorProperties.getErrorBodyClass().equals(clazz));

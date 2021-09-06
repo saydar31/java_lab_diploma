@@ -30,8 +30,7 @@ public class ServiceClassGenerator {
     }
 
     public void createServiceClasses(File servicesDirectory, ClientInfo clientInfo) {
-        String basePackage = sdkGeneratorProperties.getBasePackage() != null ?
-                sdkGeneratorProperties.getBasePackage() : "com.company.demo";
+        String basePackage = sdkGeneratorProperties.getBasePackage();
 
         if (sdkGeneratorProperties.getErrorBodyClass() == null) {
             throw new IllegalStateException();

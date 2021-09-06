@@ -18,6 +18,30 @@ public class MethodInfo {
     private List<MethodParameter> queryParams;
     private MethodParameter bodyParameter;
     private boolean authenticationMethod;
+    private String modelPackage;
+
+    public String getModelPackage() {
+        return modelPackage;
+    }
+
+    public void setModelPackage(String modelPackage) {
+        this.modelPackage = modelPackage;
+    }
+
+    public String getReturnTypeName() {
+        if (responseBodyType instanceof Class) {
+            Class<?> aClass = (Class<?>) this.responseBodyType;
+            if (aClass.getPackage().getName().startsWith("java.")) {
+                return aClass.getName();
+            } else {
+                return modelPackage + "." + aClass.getSimpleName();
+            }
+        } else {
+            String stringBuilder = MethodParameter.replacePackages(responseBodyType, modelPackage);
+            if (stringBuilder != null) return stringBuilder;
+        }
+        return Object.class.getName();
+    }
 
     public MethodInfo() {
         this.parameters = new ArrayList<>();
@@ -31,7 +55,7 @@ public class MethodInfo {
     }
 
     public boolean isReturnTypeNotVoid() {
-        return responseBodyType.equals(Void.class) || responseBodyType.equals(void.class);
+        return !(responseBodyType.equals(Void.class) || responseBodyType.equals(void.class));
     }
 
     public void addParameter(MethodParameter methodParameter) {
