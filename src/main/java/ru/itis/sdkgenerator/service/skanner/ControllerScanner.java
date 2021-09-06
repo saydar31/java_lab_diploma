@@ -1,4 +1,4 @@
-package ru.itis.sdkgenerator.service;
+package ru.itis.sdkgenerator.service.skanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

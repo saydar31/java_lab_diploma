@@ -1,4 +1,4 @@
-package ru.itis.sdkgenerator.service;
+package ru.itis.sdkgenerator.service.skanner;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;

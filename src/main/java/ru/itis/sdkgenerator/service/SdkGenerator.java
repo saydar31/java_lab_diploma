@@ -5,6 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ru.itis.sdkgenerator.data.ClientInfo;
 import ru.itis.sdkgenerator.service.generation.CodeGeneratorService;
+import ru.itis.sdkgenerator.service.skanner.ApplicationScanner;
 
 @Component
 public class SdkGenerator {

@@ -1,4 +1,4 @@
-package ru.itis.sdkgenerator.service;
+package ru.itis.sdkgenerator.service.skanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -13,6 +13,7 @@ import ru.itis.sdkgenerator.data.ServiceInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,11 +35,9 @@ public class ApplicationScanner {
          * класс внутри response entry
          * из аннотации получить имя метода
          */
-        List<? extends Class<?>> controllerClasses = handlerMapping.getHandlerMethods().values().stream()
-                .map(HandlerMethod::getBeanType)
-                .filter(aClass -> aClass.isAnnotationPresent(SdkController.class))
-                .distinct()
-                .collect(Collectors.toList());
+        Set<? extends Class<?>> controllerClasses = applicationContext.getBeansWithAnnotation(SdkController.class).values().stream()
+                .map(Object::getClass)
+                .collect(Collectors.toSet());
 
         List<ServiceInfo> services = new ArrayList<>();
         for (Class<?> controllerClass : controllerClasses) {
